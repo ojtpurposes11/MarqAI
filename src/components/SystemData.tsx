@@ -13,15 +13,12 @@ interface SystemDataProps {
 export const SystemData: React.FC<SystemDataProps> = ({ status }) => {
   return (
     <div style={{
-      position: 'absolute',
-      top: '6.5rem',
-      right: '2rem',
-      zIndex: 10,
       display: 'flex',
       flexDirection: 'column',
-      gap: '1.5rem',
+      gap: '1.25rem',
       alignItems: 'flex-end',
-      pointerEvents: 'none'
+      pointerEvents: 'none',
+      width: '100%'
     }}>
       {/* CPU Widget */}
       <div className="hud-panel" style={{ padding: '0.75rem 1rem', width: '180px' }}>

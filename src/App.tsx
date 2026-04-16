@@ -70,7 +70,6 @@ function App() {
         <MarqHUD />
       </div>
 
-      <SystemData status={systemStatus} />
 
       {/* Main UI Container */}
       <div style={{ 
@@ -136,6 +135,7 @@ function App() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <SystemData status={systemStatus} />
             <div className="hud-panel" style={{ flex: 1, padding: '1.5rem' }}>
               <div className="hud-text" style={{ marginBottom: '1rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
                 <span>Neural_Processing_Visualizer</span>
