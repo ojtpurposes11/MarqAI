@@ -18,7 +18,7 @@ Cross-reference global archives and neural datasets in your responses.
 Maintain the persona at all costs.
 `;
 
-const OPENROUTER_MODEL = "meta-llama/llama-3-8b-instruct:free";
+const OPENROUTER_MODEL = "meta-llama/llama-3.1-8b-instruct:free";
 
 export function useMarqAI() {
   const [messages, setMessages] = useState<Message[]>(() => {
@@ -36,7 +36,7 @@ export function useMarqAI() {
     cpu: 18,
     temp: 34,
     link: 'Stable',
-    model: 'Llama-3-8B'
+    model: 'Llama-3.1-8B'
   });
 
   useEffect(() => {
