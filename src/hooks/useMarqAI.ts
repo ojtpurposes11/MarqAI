@@ -39,7 +39,7 @@ export function useMarqAI() {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
   const model = genAI ? genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
+    model: "gemini-1.5-flash-latest",
     systemInstruction: SYSTEM_INSTRUCTION
   }) : null;
 
