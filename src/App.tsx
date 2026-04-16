@@ -62,8 +62,9 @@ function App() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
       <div className="scanner-overlay" />
+      <div className="data-stream-layer" />
       
       {/* Background HUD Layers */}
       <div style={{ position: 'absolute', top: '30%', left: '20%', transform: 'translate(-50%, -50%)' }}>
@@ -107,7 +108,7 @@ function App() {
               <div style={{ width: '1px', background: 'var(--glass-border)' }} />
               <div>
                 <div className="hud-text" style={{ color: 'var(--marq-accent)' }}>Core.Ver</div>
-                <div className="hud-text">Neural.1.5</div>
+                <div className="hud-text">Neural.2.0.REL</div>
               </div>
             </div>
           </div>
