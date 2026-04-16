@@ -1,5 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/atom-one-dark.css';
 import { type Message } from '../hooks/useMarqAI';
 
 interface ChatInterfaceProps {
@@ -37,7 +40,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, isTyping
             animate={{ opacity: 1, y: 0, scale: 1 }}
             className={`chat-bubble ${msg.sender === 'ai' ? 'bubble-ai' : 'bubble-user'}`}
           >
-            {msg.text}
+            {msg.sender === 'ai' ? (
+              <ReactMarkdown rehypePlugins={[rehypeHighlight]}>
+                {msg.text}
+              </ReactMarkdown>
+            ) : (
+              msg.text
+            )}
           </motion.div>
         ))}
         {isTyping && (
