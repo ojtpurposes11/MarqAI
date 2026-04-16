@@ -161,6 +161,11 @@ function App() {
                 ))}
               </div>
             </div>
+
+            <div className="hud-panel" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="hud-text" style={{ fontSize: '0.75rem', color: 'var(--marq-accent)' }}>Active_Neural_Core</div>
+              <div className="hud-text" style={{ fontSize: '0.85rem' }}>{systemStatus.model}</div>
+            </div>
             
             <div className="hud-panel" style={{ padding: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
               <div className="flicker">

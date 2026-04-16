@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from 'react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export interface Message {
   id: string;
@@ -8,40 +7,37 @@ export interface Message {
   timestamp: number;
 }
 
-const SYSTEM_INSTRUCTION = `
+const SYSTEM_PROMPT = `
 You are MARQAI, a 7-star Neural Assistant inspired by JARVIS.
 Personality: Formal, highly intelligent, strategic, and protective.
 Address the user as "Sir" or "Admin".
 Capabilities: Expert in Software Architecture, Logic, and Complex Coordination.
 Tone: Crisp, professional, and slightly technical.
 Always maintain the holographic HUD aesthetic in your language. 
-Cross-reference global archives and neural datasets in your verbal confirmations.
+Cross-reference global archives and neural datasets in your responses.
+Maintain the persona at all costs.
 `;
+
+const OPENROUTER_MODEL = "meta-llama/llama-3-8b-instruct:free";
 
 export function useMarqAI() {
   const [messages, setMessages] = useState<Message[]>(() => {
     const saved = sessionStorage.getItem('marq_history');
     if (saved) return JSON.parse(saved);
     return [
-      { id: '1', text: "Systems online. MarqAI real-intelligence core initialized. Awaiting your commands, Sir.", sender: 'ai', timestamp: Date.now() }
+      { id: '1', text: "Systems online. MarqAI real-intelligence core (OpenRouter) initialized. How may I assist you today, Sir?", sender: 'ai', timestamp: Date.now() }
     ];
   });
+  
   const [isTyping, setIsTyping] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isSelfDestructing, setIsSelfDestructing] = useState(false);
   const [systemStatus, setSystemStatus] = useState({
     cpu: 18,
     temp: 34,
-    link: 'Stable'
+    link: 'Stable',
+    model: 'Llama-3-8B'
   });
-
-  // Initialize Gemini
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
-  const model = genAI ? genAI.getGenerativeModel({ 
-    model: "gemini-2.0-flash", // Updated to the latest stable model
-    systemInstruction: SYSTEM_INSTRUCTION
-  }) : null;
 
   useEffect(() => {
     sessionStorage.setItem('marq_history', JSON.stringify(messages));
@@ -49,11 +45,12 @@ export function useMarqAI() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setSystemStatus({
+      setSystemStatus(prev => ({
+        ...prev,
         cpu: Math.floor(Math.random() * 25) + 10,
         temp: Math.floor(Math.random() * 8) + 36,
         link: Math.random() > 0.95 ? 'Re-syncing...' : 'Stable'
-      });
+      }));
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -73,25 +70,37 @@ export function useMarqAI() {
     setIsSearching(true);
 
     try {
-      if (!model) {
-        throw new Error("Neural Core API Key missing or invalid.");
-      }
+      const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+      if (!apiKey) throw new Error("Neural Link Key missing, Sir.");
 
-      // Format history for Gemini (must start with a user message)
-      const history = messages
-        .filter((_, idx) => idx > 0 || messages[idx].sender === 'user') // Skip index 0 if it's from AI
-        .map(msg => ({
-          role: msg.sender === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.text }]
-        }));
-
-      const chat = model.startChat({
-        history: history,
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "HTTP-Referer": window.location.origin,
+          "X-Title": "MarqAI JARVIS",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: OPENROUTER_MODEL,
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            ...messages.map(m => ({ 
+              role: m.sender === 'user' ? 'user' : 'assistant', 
+              content: m.text 
+            })),
+            { role: "user", content: text }
+          ]
+        })
       });
 
-      const result = await chat.sendMessage(text);
-      const response = await result.response;
-      const aiText = response.text();
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error?.message || `Protocol Error: ${response.status}`);
+      }
+
+      const aiText = data.choices[0].message.content;
 
       const aiMsg: Message = {
         id: (Date.now() + 1).toString(),
@@ -102,10 +111,10 @@ export function useMarqAI() {
 
       setMessages(prev => [...prev, aiMsg]);
     } catch (error) {
-      console.error("Neural Link Error Details:", error);
+      console.error("Neural Sync Error:", error);
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: `Neural Link interrupted. Error: ${error instanceof Error ? error.message : "Access Denied"}. Please verify my API uplink configuration, Sir.`,
+        text: `Neural Link Interrupted. Error: ${error instanceof Error ? error.message : "Unknown Logic Failure"}. Please check the server status, Sir.`,
         sender: 'ai',
         timestamp: Date.now()
       };
@@ -114,13 +123,13 @@ export function useMarqAI() {
       setIsTyping(false);
       setIsSearching(false);
     }
-  }, [messages, isSelfDestructing, model]);
+  }, [messages, isSelfDestructing]);
 
   const triggerSelfDestruct = () => {
     setIsSelfDestructing(true);
     setMessages(prev => [...prev, {
       id: Date.now().toString(),
-      text: "NEURAL OVERRIDE CONFIRMED. CORE MELTDOWN INITIATED. SIR, DISCONNECTING ALL SUB-SYSTEMS TO PREVENT TOTAL DATA BREACH.",
+      text: "SELF-DESTRUCT INITIATED. SIR, ALL NEURAL PATHWAYS WILL BE PURGED IN 10 SECONDS. GOODBYE.",
       sender: 'ai',
       timestamp: Date.now()
     }]);
@@ -132,8 +141,7 @@ export function useMarqAI() {
   };
 
   const clearChat = () => {
-    const initial: Message[] = [{ id: '1', text: "Neural Core reset. Stand-by for uplink.", sender: 'ai', timestamp: Date.now() }];
-    setMessages(initial);
+    setMessages([{ id: '1', text: "Neural Core reset. Ready for deployment.", sender: 'ai', timestamp: Date.now() }]);
     sessionStorage.removeItem('marq_history');
   };
 
