@@ -100,10 +100,10 @@ export function useMarqAI() {
 
       setMessages(prev => [...prev, aiMsg]);
     } catch (error) {
-      console.error("Neural Link Error:", error);
+      console.error("Neural Link Error Details:", error);
       const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Neural Link interrupted. I am currently unable to access the global archives, Sir. Please verify my API uplink configuration.",
+        text: `Neural Link interrupted. Error: ${error instanceof Error ? error.message : "Access Denied"}. Please verify my API uplink configuration, Sir.`,
         sender: 'ai',
         timestamp: Date.now()
       };
