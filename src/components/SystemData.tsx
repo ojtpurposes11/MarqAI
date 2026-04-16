@@ -14,7 +14,7 @@ export const SystemData: React.FC<SystemDataProps> = ({ status }) => {
   return (
     <div style={{
       position: 'absolute',
-      top: '2rem',
+      top: '6.5rem',
       right: '2rem',
       zIndex: 10,
       display: 'flex',
