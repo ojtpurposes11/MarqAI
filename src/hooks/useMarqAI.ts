@@ -77,11 +77,13 @@ export function useMarqAI() {
         throw new Error("Neural Core API Key missing or invalid.");
       }
 
-      // Format history for Gemini
-      const history = messages.map(msg => ({
-        role: msg.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.text }]
-      }));
+      // Format history for Gemini (must start with a user message)
+      const history = messages
+        .filter((_, idx) => idx > 0 || messages[idx].sender === 'user') // Skip index 0 if it's from AI
+        .map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.text }]
+        }));
 
       const chat = model.startChat({
         history: history,
