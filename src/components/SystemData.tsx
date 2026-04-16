@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Activity, Thermometer, Wifi, Cpu } from 'lucide-react';
+import { Thermometer, Wifi, Cpu } from 'lucide-react';
 
 interface SystemDataProps {
   status: {

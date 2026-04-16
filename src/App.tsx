@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Power, AlertTriangle, Shield, Cpu, Activity, Maximize2 } from 'lucide-react';
+import { Send, AlertTriangle, Shield, Activity, Maximize2 } from 'lucide-react';
 import './index.css';
 import { useMarqAI } from './hooks/useMarqAI';
 import { MarqAvatar } from './components/MarqAvatar';
